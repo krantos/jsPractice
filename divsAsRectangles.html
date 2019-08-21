@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JS Documentation Examples / Tests</title>
+</head>
+
+<body>
+  <div class="container">
+  </div>
+
+  <style>
+    .container {
+      width: 100%;
+      height: 95vh;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("mousemove", coordenadasM, false);
+    document.addEventListener("mousedown", showMouse, false);
+    document.addEventListener("mouseup", showMouse, false);
+    const pMouse = document.createElement('p');
+    const container = document.querySelector('.container');
+    let divSquare;
+    let xi = 0;
+    let yi = 0;
+    let xf = 0;
+    let yf = 0;
+    let topP = 0;
+    let leftP = 0;
+    let startDraw = false;
+    var difX = 0;
+    var difY = 0;
+
+
+    function showMouse(evt) {
+      if (evt.type == "mousedown") {
+        var m = new MouseEvent("m", evt);
+        xi = m.x;
+        yi = m.y;
+        divSquare = document.createElement('div');
+        divSquare.style.backgroundColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
+        divSquare.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+        divSquare.style.border = '1px dashed grey';
+        divSquare.style.position = "absolute";
+        divSquare.style.top = yi + 'px';
+        divSquare.style.left = xi + 'px';
+        divSquare.className = "sq-" + topP;
+        container.appendChild(divSquare);
+        startDraw = true;
+      }
+      if (evt.type == "mouseup") {
+        var m = new MouseEvent("m", evt);
+        xf = m.x;
+        yf = m.y;
+        topP = topP + 10;
+        leftP = leftP + 10;
+        startDraw = false;
+      }
+    }
+
+    function coordenadasM(evt) {
+      if (evt.type == "mousemove") {
+        var m = new MouseEvent("m", evt);
+        var mouseXi = m.x;
+        var mouseYi = m.y;
+        pMouse.textContent = '(' + mouseXi + ', ' + mouseYi + ')';
+        pMouse.style.position = "absolute";
+        pMouse.style.top = mouseYi + 'px';
+        pMouse.style.left = mouseXi + 'px';
+        container.appendChild(pMouse);
+      }
+      if (evt.type == "mousemove" && startDraw) {
+        var m = new MouseEvent("m", evt);
+        var mouseXi = m.x;
+        var mouseYi = m.y;
+        difX = mouseXi - xi;
+        difY = mouseYi - yi;
+        pMouse.textContent = '(' + difX + ', ' + difY + ')';
+        pMouse.style.position = "absolute";
+        pMouse.style.top = mouseYi + 'px';
+        pMouse.style.left = mouseXi + 'px';
+        divSquare.style.width = difX + 'px';
+        divSquare.style.height = difY + 'px';
+      }
+    }
+  </script>
+</body>
+
+</html>
