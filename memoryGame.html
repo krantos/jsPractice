@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Memory Game</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="info">
+      <h1>Memory Game</h1>
+      How many pairs? <br> <input type="number" min="0" max="100" step="2" value="10" name="pairAmount">
+      <button onclick="createNewGame()">New Game</button>
+      <h2 class="winnermessage"></h2>
+      <h2 class="points"></h2>
+      <p>Time: <span class="clock">00:00</span></p>
+    </div>
+    <div class="board"></div>
+  </div>
+  <style>
+    .container {
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-size: 1.5em;
+      width: 70%;
+      margin: auto;
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    .board {
+      display: grid;
+    }
+
+    .board div {
+      margin: 10px;
+      width: 50px;
+      height: 80px;
+      border: 3px solid lightgray;
+      border-radius: 3%;
+      padding: 3px;
+      float: left;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .back {
+      background: repeating-linear-gradient(45deg,
+          #606dbc,
+          #606dbc 10px,
+          #465298 10px,
+          #465298 20px);
+    }
+
+    .front {
+      background-color: #606dbc;
+      transition: all 300ms;
+      color: white;
+    }
+
+    .shadow {
+      background-color: #aaa;
+      color: white;
+    }
+
+    .card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      color: white;
+    }
+
+    .card span {
+      display: flex;
+
+    }
+  </style>
+  <script>
+    window.addEventListener("load", createNewGame, false);
+    const info = document.querySelector('.info');
+    const boardDiv = document.querySelector('.board');
+    const winnerMessage = document.querySelector('.winnermessage');
+    const clockHtml = document.querySelector('.clock');
+    let timePoints;
+    let clock;
+    boardDiv.addEventListener("click", controlGame, false);
+
+    const board = {
+      numberOfCards: 4,
+      cardSet: [],
+      points: 0,
+      cardPick1: null,
+      cardPick2: null,
+      picked: 0,
+      pairsFound: 0,
+      timepass: 0,
+    };
+
+
+    function createNewGame() {
+      removeCards();
+      removeIntervalTime();
+      newGame();
+    }
+
+    function resetInfo() {
+      board.points = 0;
+      board.pairsFound = 0;
+      board.timepass = 0;
+      winnerMessage.innerText = "Playing..."
+      clockHtml.innerHTML = "00:00";
+    }
+
+    function removeCards() {
+      boardDiv.innerHTML = '';
+      board.cardSet = [];
+    }
+
+    function newGame() {
+      resetInfo();
+      getNumberOfCards();
+      updatePoints();
+      newCardSet();
+      shuffleCardSet();
+      dealCards();
+      startClock();
+      decreasePointPerTime();
+    }
+
+    function getNumberOfCards() {
+      const inputAmount = document.getElementsByName('pairAmount')[0];
+      if (inputAmount.value % 2 == 0) {
+        board.numberOfCards = inputAmount.value;
+      }
+    }
+
+    function decreasePointPerTime() {
+      timePoints = setInterval(() => {
+        board.points -= 5;
+        updatePoints();
+      }, 5000);
+    }
+
+    function startClock() {
+      clock = setInterval(() => {
+        ++board.timepass
+        updateClock();
+      }, 1000);
+    }
+
+    function updateClock() {
+      clockHtml.innerHTML = pad(parseInt(board.timepass / 60)) + ":" + pad(board.timepass % 60)
+    }
+
+    function pad(val) {
+      var valString = val + "";
+      if (valString.length < 2) {
+        return "0" + valString;
+      } else {
+        return valString;
+      }
+    }
+
+    function removeIntervalTime() {
+      clearInterval(timePoints);
+      clearInterval(clock);
+    }
+
+    function newCardSet() {
+      for (let cardPosition = 0; cardPosition <= board.numberOfCards - 1; cardPosition++) {
+        board.cardSet[cardPosition] = cardPosition + 1;
+      }
+      board.cardSet = [...board.cardSet, ...board.cardSet];
+    }
+
+    function shuffleCardSet() { //https://javascript.info/task/shuffle
+      for (let i = board.cardSet.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [board.cardSet[i], board.cardSet[j]] = [board.cardSet[j], board.cardSet[i]];
+      }
+    }
+
+    function dealCards() {
+      let colums = 2;
+      if (board.numberOfCards >= 8) {
+        colums = 4;
+      }
+      if (board.numberOfCards >= 20) {
+        colums = 6;
+      }
+      if (board.numberOfCards >= 30) {
+        colums = 8;
+      }
+      if (board.numberOfCards >= 50) {
+        colums = 10;
+      }
+      boardDiv.style.gridTemplateColumns = "repeat(" + Math.floor(board.cardSet.length / colums) + ", 90px)";
+      board.cardSet.forEach((card, index) => {
+        const cardContainer = document.createElement('div');
+        cardContainer.accessKey = index;
+        cardContainer.className = "card back";
+        boardDiv.appendChild(cardContainer);
+      });
+    }
+
+    function revealCard(cardPicked) {
+      const number = document.createElement('span');
+      number.innerText = board.cardSet[cardPicked.accessKey];
+      if (cardPicked.className == "card back") {
+        cardPicked.className = "card front picked";
+        cardPicked.appendChild(number);
+      }
+    }
+
+    function hideCards() {
+      board.cardPick1.lastChild.remove();
+      board.cardPick2.lastChild.remove();
+      board.cardPick1.className = "card back";
+      board.cardPick2.className = "card back";
+      board.picked = 0;
+    }
+
+    function shadowCards() {
+      board.cardPick1.className = "card shadow";
+      board.cardPick2.className = "card shadow";
+      board.picked = 0;
+    }
+
+    function updatePoints() {
+      const points = document.querySelector('.points');
+      points.innerText = "Points: " + board.points;
+    }
+
+    function checkWinner() {
+      board.pairsFound += 1;
+      if (board.pairsFound == board.numberOfCards) {
+        winnerMessage.innerText = 'You Win!';
+        removeIntervalTime();
+      }
+    }
+
+    function addPoints() {
+      board.points += 10;
+    }
+
+    function controlGame(evt) {
+      if (evt.target.className.includes('card back')) {
+        const cardPicked = evt.target;
+        const keyCard = evt.target.accessKey;
+        if (!cardPicked.className.includes('picked')) {
+          board.picked++;
+          if (board.picked == 1) {
+            board.cardPick1 = cardPicked
+            revealCard(cardPicked);
+          }
+          if (board.picked == 2) {
+            board.cardPick2 = cardPicked
+            revealCard(cardPicked);
+            setTimeout(function () {
+              if (board.cardSet[board.cardPick1.accessKey] == board.cardSet[board.cardPick2.accessKey]) {
+                addPoints()
+                shadowCards();
+                checkWinner();
+              } else {
+                hideCards();
+              }
+              updatePoints();
+            }, 550);
+          }
+        }
+      }
+    }
+
+  </script>
+</body>
+
+</html>

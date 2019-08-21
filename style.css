@@ -1,0 +1,58 @@
+body {
+  height: calc(100vh - 2rem);
+  background-color: #000;
+  color: #fff;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#explanation {
+  display: none;
+}
+
+.game label {
+  display: none;
+  
+}
+
+#input_guess {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  background-color: #000;
+  border: none;
+  font-size: 10rem;
+}
+
+#input_guess:focus {
+  outline: #000;
+}
+
+.keypad {
+  display: flex;
+  justify-content: center;
+}
+
+.keypad button {
+  background: none;
+  color: white;
+  border: 1px solid white;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  cursor: pointer;
+  width: calc(1.8rem + 10px);
+  padding: 10px
+}
+
+.keypad button:active {
+  background-color: rgb(53, 155, 223);
+}
+
+#keypad_table {
+  border-spacing: 8px;
+}

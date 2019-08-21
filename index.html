@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Html 5 Practice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="game">
+    <h1>NUMBER GUESSING</h1>
+    <h3>BETWEEN 1 & 100</h3>
+    <p id="explanation">We have selected a random number between 1 and 100.
+      See if you can guess it in 10 turns or fewer.
+      We'll tell you if your guess was too high or too low.</p>
+
+
+    <label for="input_guess">Enter a guess:</label>
+    <input id="input_guess" class="guessField" type="text" placeholder="0 ~ 100">
+    <div class="keypad">
+      <table id="keypad_table">
+        <tbody>
+          <tr>
+            <td><button>1</button></td>
+            <td><button>2</button></td>
+            <td><button>3</button></td>
+          </tr>
+          <tr>
+            <td><button>4</button></td>
+            <td><button>5</button></td>
+            <td><button>6</button></td>
+          </tr>
+          <tr>
+            <td><button>7</button></td>
+            <td><button>8</button></td>
+            <td><button>9</button></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><button>0</button></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <input type="submit" value="Submit guess" class="guessSubmit">
+
+    <div class="resultParas">
+      <p class="guesses"></p>
+      <p class="lastResult"></p>
+      <p class="lowOrHi"></p>
+    </div>
+  </div>
+  <script>
+    let randomNumber = Math.floor(Math.random() * 100) + 1;
+
+    const guesses = document.querySelector('.guesses');
+    const lastResult = document.querySelector('.lastResult');
+    const lowOrHi = document.querySelector('.lowOrHi');
+
+    const guessSubmit = document.querySelector('.guessSubmit');
+    const guessField = document.querySelector('.guessField');
+
+    const buttonsKeypad = document.querySelectorAll('button');
+
+    let guessCount = 1;
+    let resetButton;
+
+    document.addEventListener('load', function () {
+      guessField.focus();
+    })
+    
+    
+    function writeNumberOnDisplay(nodeList) {
+      console.log(buttonsKeypad);
+      nodeList.forEach(element => {
+        element.addEventListener('click', function (element) {
+          console.log(element.target.innerText);
+        });
+      });
+    }
+
+    function checkGuess() {
+
+
+      let userGuess = Number(guessField.value);
+
+      if (guessCount === 1) {
+        guesses.textContent = 'Previous guesses: ';
+      }
+
+      guesses.textContent += userGuess + ' ';
+
+      if (userGuess === randomNumber) {
+        lastResult.textContent = 'Congratulations! You got it right!';
+        lowOrHi.textContent = '';
+        setGameOver();
+      } else if (guessCount === 10) {
+        lastResult.textContent = 'Game Over!';
+        setGameOver();
+      } else {
+        lastResult.textContent = 'Wrong!';
+        if (userGuess < randomNumber) {
+          lowOrHi.textContent = 'Last guess was too low!';
+        } else if (userGuess > randomNumber) {
+          lowOrHi.textContent = 'Last guess was too high!';
+        }
+      }
+
+      guessCount++;
+      guessField.value = '';
+      guessField.focus();
+    }
+
+    function setGameOver() {
+      guessField.disabled = true;
+      guessSubmit.disabled = true;
+      resetButton = document.createElement('button');
+      resetButton.textContent = 'Start new game';
+      document.body.appendChild(resetButton);
+      resetButton.addEventListener('click', resetGame);
+    }
+
+    function resetGame() {
+      guessCount = 1;
+
+      const resetParas = document.querySelectorAll('.resultParas p');
+      for (let i = 0; i < resetParas.length; i++) {
+        resetParas[i].textContent = '';
+      }
+
+      resetButton.parentNode.removeChild(resetButton);
+
+      guessField.disabled = false;
+      guessSubmit.disabled = false;
+      guessField.value = '';
+      guessField.focus();
+
+      randomNumber = Math.floor(Math.random() * 100) + 1;
+    }
+
+    guessSubmit.addEventListener('click', checkGuess);
+
+    writeNumberOnDisplay(buttonsKeypad);
+
+  </script>
+</body>
+
+</html>
