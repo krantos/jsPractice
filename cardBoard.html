@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Card Board</title>
+</head>
+
+<body>
+
+  <style>
+    .coolTitle {
+      font-family: ti ;
+    }
+    
+
+  </style>
+  <div class="container">
+    <div class="controls"></div>
+    <div class="board"></div>
+  </div>
+
+  <script>
+
+    function Title() {
+
+      'use-strinct'
+
+      let _title;
+      let _hType;
+      let _me;
+      let _className;
+
+      return {
+        title: (title, hType, className) => {
+          _title = title;
+          _hType = hType;
+          _className = className;
+          if (_hType) {
+            _me = document.createElement(_hType);
+            _me.innerText = _title;
+            if (_className) {
+              _me.className = _className;
+            }
+          }
+        },
+
+        setTitle: (newTitle) => {
+          _me.innerText = newTitle;
+        },
+        getElement: () => {
+          if (_me) {
+            return _me;
+          }
+        },
+        setColor: (newColor) => {
+          _me.style.color = newColor;
+        },
+        setFontType: (newFont) => {
+          _me.style["font-family"] = newFont;
+        }
+
+      }
+    }
+
+    function inputEl() {
+      'use-strict'
+
+      let _me;
+      let _input;
+      let _options;
+
+      return {
+        create: (type) => {
+          _me = document.createElement('input');
+          _me.type = type;
+        },
+        addListener: (event, callback) => {
+          _me.addEventListener(event, callback);
+        },
+        getElement: () => {
+          return _me;
+        },
+        setPlaceholder: (text) => {
+          _me.placeholder = text;
+        }
+      }
+    }
+
+    function selectEl() {
+      let _me;
+
+      return {
+        create: (name) => {
+          _me = document.createElement('select');
+          _me.name = name;
+        },
+        addOption: (option, value) => {
+            const newOption = document.createElement("option");
+            newOption.value = value;
+            newOption.innerText = option;
+            _me.appendChild(newOption);
+        },
+        addListener: (event, callback) => {
+          _me.addEventListener(event, callback);
+        },
+        getElement: () => {
+          return _me;
+        }
+      }
+
+    }
+
+    const Board = (function () {
+      'use-strict';
+      const board = document.querySelector(".board");
+      const controls = document.querySelector(".controls");
+
+      const myTitle = Title();
+      const myInputText = inputEl();
+      const myColorInput = inputEl();
+      myTitle.title("Hola Mundo", "h1", "coolTitle");
+      myInputText.create("text");
+      myInputText.setPlaceholder("Hola Mundo");
+      myColorInput.create("color");
+      controls.append(myInputText.getElement());
+      controls.append(myColorInput.getElement());
+      myInputText.addListener("keyup", (ev) => {
+        myTitle.setTitle(ev.target.value);
+      });
+
+      myColorInput.addListener("change", (ev) => {
+        myTitle.setColor(ev.target.value);
+      })
+
+      const mySelect = selectEl();
+
+      const fontOptins = [
+        {option: "Arial"},
+        {option: "Segoe UI"},
+        {option: "Verdana"},
+        {option: "Lucida Sans"},
+        {option: "Georgia"},
+      ];
+
+      mySelect.create("fontfamily");
+      fontOptins.map(op => {
+        mySelect.addOption(op.option, op.option);
+      })
+      controls.append(mySelect.getElement());
+
+      mySelect.addListener("change", (ev) => {
+        myTitle.setFontType(ev.target.value);
+      })
+      board.append(myTitle.getElement());
+
+    }());
+  </script>
+</body>
+
+</html>
