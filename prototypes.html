@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Prototypes</title>
+</head>
+
+<body>
+
+  <script>
+
+    let double = {
+      getDouble(number) {
+        return number + number;
+      }
+    }
+
+    const obj1 = {
+      objName: 'soy obj1'
+    };
+
+    let obj2 = {};
+
+    const newObj = Object.assign(obj1, double);
+
+
+    function MyConstructor() {
+      this.name = "Marcos";
+      this.age = 32;
+    }
+
+    let obj3 = new MyConstructor();
+    
+    console.log("newObj", newObj);
+    console.log("double", double);
+    console.log("obj1", obj1);
+    console.log("obj2 ", obj2);
+    console.log("MyConstructor ", MyConstructor);
+    console.log("obj3 ", obj3);
+
+
+  </script>
+
+
+
+</body>
+
+</html>
